@@ -1,0 +1,26 @@
+Scraping is extracting information from webpage, filtering out and cleaning the data, then storing the data.
+
+This could be triggered automatically when something changes in the webpage
+
+Scraping data:
+URL constant
+import requests
+import selectorlib
+
+.get(url)
+.text
+
+if __name__
+
+optional headers=HEADERS constant
+
+
+Extracting data:
+inspect element in browser and get ID
+
+selectorlib.Extractor.from.yaml_file(extract.yaml)
+create extract.yaml with tours and css with id displaytimer
+.extract(source)["tours"]
+
+
+if extracted data != no upcoming tours then check if extracted data != text file (in append mode), if not, store data in text file and send email.
