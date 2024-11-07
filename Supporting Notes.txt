@@ -24,3 +24,39 @@ create extract.yaml with tours and css with id displaytimer
 
 
 if extracted data != no upcoming tours then check if extracted data != text file (in append mode), if not, store data in text file and send email.
+
+
+
+SQL Databases
+Speed in high volumes
+Concurrency
+
+DB browser for SQL is a GUI
+Hierarchy: Databases -> Tables -> Rows and columns
+Each colum has a type (text, integer, real/float)
+
+use SQL Query
+INSERT INTO
+VALUES
+SELECT FROM
+DELETE FROM
+WHERE
+* (this means all)
+
+sqlite3
+.connect(db file)
+.cursor()
+.execute(SQL Query)
+.fetchall()
+
+list of tuples
+
+.executemany(Query, new rows)
+
+?  (this defines structure. two ? means two columns)
+
+.commit()
+
+
+
+
