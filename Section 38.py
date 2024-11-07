@@ -34,5 +34,10 @@ def read_data(path):
 if __name__ == "__main__":
     all_content = scrape(URL)
     extracted_content = specific_data(all_content)
-    store_data(TEXT_FILE, extracted_content)
+
+    ## 5. Add Conditionals to ensure that "no upcoming tours" and duplicate events are not stored in the text file
+    if extracted_content != "No upcoming tours":
+        if extracted_content not in read_data(TEXT_FILE):
+            store_data(TEXT_FILE, extracted_content)
+
     print(read_data(TEXT_FILE))
