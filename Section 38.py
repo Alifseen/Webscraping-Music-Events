@@ -1,3 +1,5 @@
+import time
+
 import requests
 import selectorlib
 from EmailSender import send_email
@@ -33,15 +35,19 @@ def read_data(path):
 
 
 if __name__ == "__main__":
-    all_content = scrape(URL)
-    extracted_content = specific_data(all_content)
+    ## 7. Add a while lopp to run continuously
+    while True:
+        all_content = scrape(URL)
+        extracted_content = specific_data(all_content)
 
-    ## 5. Add Conditionals to ensure that "no upcoming tours" and duplicate events are not stored in the text file
-    if extracted_content != "No upcoming tours":
-        if extracted_content not in read_data(TEXT_FILE):
-            store_data(TEXT_FILE, extracted_content)
+        ## 5. Add Conditionals to ensure that "no upcoming tours" and duplicate events are not stored in the text file
+        if extracted_content != "No upcoming tours":
+            if extracted_content not in read_data(TEXT_FILE):
+                store_data(TEXT_FILE, extracted_content)
 
-            ## 6. Send an email if new event is found in text file
-            send_email("New Event Happening", extracted_content)
+                ## 6. Send an email if new event is found in text file
+                send_email("New Event Happening", extracted_content)
 
-    print(read_data(TEXT_FILE))
+        ## 8. Add a 2 second delay
+        time.sleep(2)
+        print(read_data(TEXT_FILE))
