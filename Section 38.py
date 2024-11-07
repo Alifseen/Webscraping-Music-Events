@@ -1,5 +1,6 @@
 import requests
 import selectorlib
+from EmailSender import send_email
 
 URL = "https://programmer100.pythonanywhere.com/tours/"
 TEXT_FILE = "files/data.txt"  ## A path that stores the data
@@ -39,5 +40,8 @@ if __name__ == "__main__":
     if extracted_content != "No upcoming tours":
         if extracted_content not in read_data(TEXT_FILE):
             store_data(TEXT_FILE, extracted_content)
+
+            ## 6. Send an email if new event is found in text file
+            send_email("New Event Happening", extracted_content)
 
     print(read_data(TEXT_FILE))
