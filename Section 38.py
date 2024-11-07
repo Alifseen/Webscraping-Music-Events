@@ -1,5 +1,5 @@
 import time
-
+import sqlite3
 import requests
 import selectorlib
 from EmailSender import send_email
@@ -7,6 +7,8 @@ from EmailSender import send_email
 URL = "https://programmer100.pythonanywhere.com/tours/"
 TEXT_FILE = "files/data.txt"  ## A path that stores the data
 
+## 9. Establsih a connection with SQL DB
+connection = sqlite3.connect("files/data.db")
 
 ## 1. Define a function that stores the entire page source data in a variable from a URL
 def scrape(url):
@@ -22,17 +24,24 @@ def specific_data(source):
     return value
 
 
-## 3. Store the data in a text file
-def store_data(path, data):
-    with open(path, "a") as file:
-        file.write(data + "\n")
+## 10. Store the data in a Database file
+def store_data(data):
+    cleaned_data = data.split(",")  ## Split the extracted data from comma
+    cleaned_data = [item.strip() for item in cleaned_data]  ## Remove white spaces
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO events VALUES(?,?,?)", cleaned_data)  ## Add to the database using ? placeholders
+    connection.commit()  ## Save database
 
 
-## 4. Read data from a a text file
-def read_data(path):
-    with open(path, "r") as file:
-        return file.read()
-
+## 11. fetch data from database if it exists there
+def read_data(data):
+    cleaned_data = data.split(",")
+    cleaned_data = [item.strip() for item in cleaned_data]
+    band, city, date = cleaned_data  ## Separate the extracted data to check against values in database columns
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM events WHERE band=? AND city=? AND date=?", (band,city,date))  ## Using AND conditional to check values from extracted data using placeholder
+    rows = cursor.fetchall()
+    return rows
 
 if __name__ == "__main__":
     ## 7. Add a while lopp to run continuously
@@ -42,12 +51,13 @@ if __name__ == "__main__":
 
         ## 5. Add Conditionals to ensure that "no upcoming tours" and duplicate events are not stored in the text file
         if extracted_content != "No upcoming tours":
-            if extracted_content not in read_data(TEXT_FILE):
-                store_data(TEXT_FILE, extracted_content)
+            ## 13. Check database if values exist.
+            row = read_data(extracted_content)
+            if not row:  ## If not, add to the database and send email
+                store_data(extracted_content)
 
                 ## 6. Send an email if new event is found in text file
                 send_email("New Event Happening", extracted_content)
 
         ## 8. Add a 2 second delay
         time.sleep(2)
-        print(read_data(TEXT_FILE))
