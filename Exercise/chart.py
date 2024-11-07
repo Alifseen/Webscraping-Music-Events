@@ -1,22 +1,19 @@
 import streamlit as st
-import scraper
-import pandas as pd
-import os
 import plotly.express as px
+import sqlite3
+import os
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(script_dir)
+dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(dir)
 
+with sqlite3.connect("temp_data.db") as connection:
+    cursor = connection.cursor()
+    datedb = cursor.execute("SELECT date FROM date_temp").fetchall()
+    tempdb = cursor.execute("SELECT temperature FROM date_temp").fetchall()
 
-URL = "https://programmer100.pythonanywhere.com/"
-TEXT_FILE = "temp_data.txt"
+    datedb = [item[0] for item in datedb]
+    tempdb = [item[0] for item in tempdb]
 
-all_content = scraper.scrape_data(URL)
-temp_content = scraper.extract_data(all_content)
-scraper.store_data(TEXT_FILE, scraper.time_now()+ ","+ temp_content)
-
-df = pd.read_csv(TEXT_FILE)
-
-figure = px.line(x=df["date"], y=df["temperature"])
+figure = px.line(x=datedb, y=tempdb)
 
 st.plotly_chart(figure)

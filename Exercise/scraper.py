@@ -1,16 +1,18 @@
 import requests
 from datetime import datetime
 import selectorlib
+import sqlite3
 
+URL = "https://programmer100.pythonanywhere.com/"
 
-def store_data(path, data):
-    with open(path,"a") as file:
-        file.write(data + "\n")
+TEXT_FILE = "temp_data.txt"
 
+with sqlite3.connect("temp_data.db") as connection:
+    cursor = connection.cursor()
 
-def read_data(path):
-    with open(path, "r")as file:
-        return file.read()
+def store_data(data):
+    cursor.execute("INSERT INTO date_temp VALUES(?,?)", (time_now(),data))
+    connection.commit()
 
 
 def scrape_data(url):
@@ -31,4 +33,9 @@ def time_now():
 
 
 if __name__ == "__main__":
-    print("done")
+    print(cursor.execute("SELECT * FROM date_temp").fetchall())
+    source = scrape_data(URL)
+    data = extract_data(source)
+    store_data(data)
+    print(cursor.execute("SELECT * FROM date_temp").fetchall())
+
